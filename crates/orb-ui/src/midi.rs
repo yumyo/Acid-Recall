@@ -1,8 +1,10 @@
 //! MIDI controller input, mapping and pickup, outside the audio callback.
 //!
-//! The first device backend is Windows WinMM (no extra driver or Rust dependency). Mapping
-//! is platform independent and uses the same Panel events as mouse edits. A dedicated worker
-//! handles MIDI Clock independently from GUI updates. Live instrument notes are not handled.
+//! The device backends are Windows WinMM (no extra driver or Rust dependency) and, on macOS and
+//! Linux, `midir` over CoreMIDI and ALSA (`portable.rs`), both delivering WinMM's packed word.
+//! Mapping is platform independent and uses the same Panel events as mouse edits. A dedicated
+//! worker handles MIDI Clock independently from GUI updates. Live instrument notes are not
+//! handled.
 
 use std::collections::{BTreeMap, HashMap};
 
@@ -28,48 +30,9 @@ mod winmm;
 use winmm as backend;
 
 #[cfg(not(windows))]
-mod backend {
-    use super::Port;
-
-    pub struct Input;
-
-    pub fn ports() -> Result<Vec<Port>, String> {
-        Err("MIDI controller input is currently available on Windows only.".into())
-    }
-
-    impl Input {
-        pub fn open(_id: u32, _clock: Option<super::sync::Sender>) -> Result<Self, String> {
-            Err("MIDI controller input is currently available on Windows only.".into())
-        }
-
-        pub fn drain(&self) -> Vec<u32> {
-            Vec::new()
-        }
-
-        pub fn dropped(&self) -> usize {
-            0
-        }
-    }
-
-    pub fn output_ports() -> Result<Vec<Port>, String> {
-        ports()
-    }
-    pub struct Output;
-    impl Output {
-        pub fn open(_id: u32) -> Result<Self, String> {
-            Err("MIDI requires Windows.".into())
-        }
-        pub fn send(&mut self, _word: u32) -> Result<(), String> {
-            Err("MIDI requires Windows.".into())
-        }
-    }
-    pub struct Timer;
-    impl Timer {
-        pub fn new() -> Self {
-            Self
-        }
-    }
-}
+mod portable;
+#[cfg(not(windows))]
+use portable as backend;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Port {
@@ -844,7 +807,7 @@ impl App {
             .default_width(620.0)
             .vscroll(true)
             .show(ctx, |ui| {
-                ui.label("UC-33e / MIDI CC control - Windows");
+                ui.label("UC-33e / MIDI CC control");
                 ui.horizontal(|ui| {
                     import = ui.button("Import routing...").clicked();
                     export = ui.button("Export routing...").clicked();

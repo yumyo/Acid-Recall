@@ -1,5 +1,12 @@
 # ACID RECALL changelog
 
+## Unreleased
+
+- **MIDI on macOS and Linux:** controller input, MIDI Learn and MIDI Clock IN/OUT now work on
+  macOS (CoreMIDI) and Linux (ALSA sequencer) through the `midir` crate. Windows keeps its
+  WinMM backend; both deliver the same packed message words, so mappings and routing files are
+  unchanged.
+
 ## 1.0.0 — 22 November 2026
 
 First stable ACID RECALL release, built on OpenRB-338.
