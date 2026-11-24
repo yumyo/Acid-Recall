@@ -39,6 +39,11 @@ image = { version = "0.25", default-features = false, features = ["png", "jpeg"]
 # window-identifier code is not needed for a box without a parent window.
 rfd = { version = "0.17.2", default-features = false, features = ["xdg-portal"] }
 
+# The Linux MIDI backend (src/midi/alsa.rs): the ALSA sequencer, through midir. ALSA itself is
+# the library cpal already links. Windows (WinMM) and macOS (CoreMIDI) call the system directly.
+[target.'cfg(target_os = "linux")'.dependencies]
+midir = { version = "0.11.1", default-features = false }
+
 [dev-dependencies]
 orb-ui-art = { path = "../orb-ui-art" }
 # The gated tests' external inputs (task-121).

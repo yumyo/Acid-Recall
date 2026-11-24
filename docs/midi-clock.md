@@ -1,4 +1,4 @@
-# MIDI Clock IN / OUT — ACID RECALL 1.0 (Windows)
+# MIDI Clock IN / OUT — ACID RECALL 1.0
 
 [Official website](https://acidrecall.com) · [Studio guide](studio.md)
 
@@ -26,7 +26,8 @@ Saved delay values remain unchanged, including an explicitly saved 0 ms. Use
 value depends on the audio interface, buffer size and connected machine; 30 ms is a starting point.
 
 Timing comes from audio frame counts, retaining fractional clock phase across blocks and
-tempo changes. A separate worker schedules timestamped events and calls WinMM. No MIDI
+tempo changes. A separate worker schedules timestamped events and calls WinMM, CoreMIDI or the
+ALSA sequencer. No MIDI
 driver calls, memory allocation or waiting run on the audio thread. When sync is active,
 the player renders 64-frame blocks; OFF retains its original 1024-frame calls.
 
@@ -74,7 +75,7 @@ Disconnecting slave sync also halts playback instead of silently switching to fr
 - Stop is sent on output disconnect/shutdown. Driver failures, queue overflow, stale audio
   and long worker stalls stop synchronization instead of bursting queued pulses. Use
   Refresh / reconnect after connecting hardware again or resuming from sleep.
-- WinMM drivers, Windows scheduling, audio buffering, USB and hardware introduce latency
+- MIDI drivers (WinMM, CoreMIDI, ALSA), OS scheduling, audio buffering, USB and hardware introduce latency
   and jitter. OUT delay is manual; there is no automatic round-trip calibration. Test on
   your real interface and drum machine; automated tests do not certify physical timing.
 - Use a MIDI Thru box/interface routing to distribute one output to several machines.
@@ -82,4 +83,5 @@ Disconnecting slave sync also halts playback instead of silently switching to fr
 
 Protocol references: MIDI Association, MIDI 1.0 Detailed Specification (Timing Clock,
 Start/Continue/Stop and Song Position Pointer), and Microsoft Learn WinMM `midiOutShortMsg`,
-`midiOutGetDevCapsW` and `midiInOpen`. No new MIDI library is bundled.
+`midiOutGetDevCapsW` and `midiInOpen`. Windows and macOS bundle no MIDI library; Linux uses the
+`midir` crate (MIT) over the ALSA sequencer.

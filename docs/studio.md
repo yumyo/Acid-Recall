@@ -7,8 +7,8 @@
 Open **Options > Preferences / Audio...**. The Windows x64 release includes **WASAPI**
 and **ASIO**. A new setup uses the Windows default output through WASAPI; ASIO is selected
 explicitly and remembered. Install your audio interface's **64-bit Windows ASIO driver**
-to see it in the ASIO device list. Other platforms show their available native backends;
-Windows ARM64 currently retains WASAPI. Audio preferences are separate from MIDI ports.
+to see it in the ASIO device list. Other platforms show their available native backends
+(**CoreAudio** on macOS); Windows ARM64 currently retains WASAPI. Audio preferences are separate from MIDI ports.
 
 Choose the **Driver**, **Device**, **Stereo outputs** (1/2, 3/4, etc.), **Sample rate** and
 **Buffer size**, then click **APPLY**. The active backend/device, rate and observed callback
@@ -402,7 +402,8 @@ integrity, genre/harmony constraints and the real player's allocation/free guard
 
 ## MIDI controllers and Studio
 
-Options > MIDI Controller can listen to several Windows input devices simultaneously.
+Options > MIDI Controller can listen to several input devices simultaneously (WinMM on
+Windows, CoreMIDI on macOS, the ALSA sequencer on Linux).
 Input 1 preserves the existing controller and assignments. Use **Add MIDI input** for
 Input 2 and further slots, choose a different device in each, then Learn as usual. The next
 CC identifies both its controller slot and channel, so two devices may use the same CC
@@ -426,7 +427,7 @@ CC button press (64-127 pressed, 0-63 released). Boolean controls use that same 
 threshold, while continuous controls retain pickup. Quantized pitch and mode selectors
 preserve the controller position until an external UI or project change requires pickup.
 
-## MIDI Clock IN / OUT (Windows)
+## MIDI Clock IN / OUT
 
 Open **MIDI > MIDI CLOCK / SYNC**. Choose **MASTER / OUT** to send tempo and
 Start/Continue/Stop to an external machine, or **SLAVE / IN** to follow its clock and
